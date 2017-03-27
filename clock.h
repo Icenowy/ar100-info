@@ -81,7 +81,7 @@
 /*
  * AR100 clock configuration register:
  * [31:18] Reserved
- * [17:16] Clock source (00: LOSC, 01: HOSC, 10/11: PLL6/PDIV)
+ * [17:16] Clock source (00: LOSC, 01: HOSC, 10: PLL6/PDIV, 11: Internal OSC on H3, PLL6/PDIV on A31)
  * [15:13] Reserved
  * [12:8]  Post divide (00000: 1 - 11111: 32)
  * [7:6]   Reserved
@@ -92,6 +92,7 @@
 #define AR100_CLKCFG_SRC_LOSC		(0 << 16)
 #define AR100_CLKCFG_SRC_HOSC		(1 << 16)
 #define AR100_CLKCFG_SRC_PLL6		(2 << 16)
+#define AR100_CLKCFG_SRC_3		(3 << 16)
 #define AR100_CLKCFG_SRC_MASK		(0x3 << 16)
 #define AR100_CLKCFG_POSTDIV(x)		(((x) & 0x1f) << 8)
 #define AR100_CLKCFG_POSTDIV_MASK	(0x1f << 8)

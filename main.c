@@ -396,6 +396,17 @@ void test_clk_config(void)
 
 	test_clk_freq();
 
+	if (soc_is_h3()) {
+		puts("Set clock source to Internal OSC ...");
+		old_ar100_clkcfg_reg = ar100_clkcfg_reg = readl(AR100_CLKCFG_REG);
+		ar100_clkcfg_reg &= ~AR100_CLKCFG_SRC_MASK;
+		ar100_clkcfg_reg |= AR100_CLKCFG_SRC_3;
+		writel(ar100_clkcfg_reg, AR100_CLKCFG_REG);
+		puts("done\n");
+
+		test_clk_freq();
+	};
+
 	puts("Set clock source to HOSC (POSTDIV=0, DIV=0)...");
 	ar100_clkcfg_reg = readl(AR100_CLKCFG_REG);
 	ar100_clkcfg_reg &= ~AR100_CLKCFG_SRC_MASK;
