@@ -145,6 +145,11 @@ int soc_is_a64(void)
 	return (readl(SRAM_VER_REG) >> 16) == 0x1689;
 }
 
+int soc_is_h5(void)
+{
+	return (readl(SRAM_VER_REG) >> 16) == 0x1718;
+}
+
 int dram_is_clocked(void)
 {
     return readl(CCU_PLL5CFG) & (1 << 31);
@@ -152,7 +157,7 @@ int dram_is_clocked(void)
 
 void gpio_init()
 {
-	if (soc_is_h3()) {
+	if (soc_is_h3() || soc_is_h5()) {
 		sunxi_gpio_set_cfgpin(SUNXI_GPA(4), SUN8I_H3_GPA_UART0);
 		sunxi_gpio_set_cfgpin(SUNXI_GPA(5), SUN8I_H3_GPA_UART0);
 	} else if (soc_is_a64()) {
@@ -364,8 +369,9 @@ void benchmark(void)
 	puts("\n  == Benchmark ==\n");
 	test_mem_latency("   == Code in SRAM A2 (I-cache ON), data in SRAM A2 ==",
 			 &dummy);
-	test_mem_latency("   == Code in SRAM A2 (I-cache ON), data in SRAM A1 ==",
-			 (void *)0x40000);
+	if (!soc_is_h5())
+		test_mem_latency("   == Code in SRAM A2 (I-cache ON), data in SRAM A1 ==",
+				 (void *)0x40000);
 	if (dram_is_clocked()) {
 		test_mem_latency(
 			 "   == Code in SRAM A2 (I-cache ON), data in DRAM ==",
@@ -376,8 +382,9 @@ void benchmark(void)
 	puts("\n");
 	test_mem_latency("   == Code in SRAM A2 (I-cache OFF), data in SRAM A2 ==",
 			 &dummy);
-	test_mem_latency("   == Code in SRAM A2 (I-cache OFF), data in SRAM A1 ==",
-			 (void *)0x40000);
+	if (!soc_is_h5())
+		test_mem_latency("   == Code in SRAM A2 (I-cache OFF), data in SRAM A1 ==",
+				 (void *)0x40000);
 	if (dram_is_clocked()) {
 		test_mem_latency(
 			 "   == Code in SRAM A2 (I-cache OFF), data in DRAM ==",
@@ -404,7 +411,7 @@ void test_clk_config(void)
 
 	test_clk_freq();
 
-	if (soc_is_h3() || soc_is_a64()) {
+	if (soc_is_h3() || soc_is_a64() || soc_is_h5()) {
 		puts("Set clock source to Internal OSC ...");
 		old_ar100_clkcfg_reg = ar100_clkcfg_reg = readl(AR100_CLKCFG_REG);
 		ar100_clkcfg_reg &= ~AR100_CLKCFG_SRC_MASK;
