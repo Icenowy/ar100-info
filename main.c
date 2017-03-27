@@ -253,6 +253,10 @@ void test_clk_freq(void)
 	delta = time1 - time0;
 
 	clk_freq = (uint64_t)delta * 12000 / tmr_avs0_div;
+
+	put_uint(clk_freq);
+	puts(" Hz = ");
+
 	clk_freq = (clk_freq + 500) / 1000;
 
 	if (clk_freq < 1000) {
