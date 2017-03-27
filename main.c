@@ -140,6 +140,11 @@ int soc_is_h3(void)
 	return (readl(SRAM_VER_REG) >> 16) == 0x1680;
 }
 
+int soc_is_a64(void)
+{
+	return (readl(SRAM_VER_REG) >> 16) == 0x1689;
+}
+
 int dram_is_clocked(void)
 {
     return readl(CCU_PLL5CFG) & (1 << 31);
@@ -150,6 +155,9 @@ void gpio_init()
 	if (soc_is_h3()) {
 		sunxi_gpio_set_cfgpin(SUNXI_GPA(4), SUN8I_H3_GPA_UART0);
 		sunxi_gpio_set_cfgpin(SUNXI_GPA(5), SUN8I_H3_GPA_UART0);
+	} else if (soc_is_a64()) {
+		sunxi_gpio_set_cfgpin(SUNXI_GPB(8), SUN50I_A64_GPB_UART0);
+		sunxi_gpio_set_cfgpin(SUNXI_GPB(9), SUN50I_A64_GPB_UART0);
 	} else {
 		/* setup UART0 to PORTF */
 		/* disable GPH20,21 as uart0 tx,rx to avoid conflict */
@@ -396,7 +404,7 @@ void test_clk_config(void)
 
 	test_clk_freq();
 
-	if (soc_is_h3()) {
+	if (soc_is_h3() || soc_is_a64()) {
 		puts("Set clock source to Internal OSC ...");
 		old_ar100_clkcfg_reg = ar100_clkcfg_reg = readl(AR100_CLKCFG_REG);
 		ar100_clkcfg_reg &= ~AR100_CLKCFG_SRC_MASK;

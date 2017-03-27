@@ -163,6 +163,8 @@ enum sunxi_gpio_number {
 
 #define SUN8I_H3_GPA_UART0	2
 
+#define SUN50I_A64_GPB_UART0	4
+
 int sunxi_gpio_set_cfgpin(u32 pin, u32 val);
 int sunxi_gpio_get_cfgpin(u32 pin);
 int sunxi_gpio_output(u32 pin, u32 val);
